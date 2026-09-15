@@ -27,20 +27,22 @@
 
 ## 2b. Recommended Versions
 
+Checked against current releases as of 2026-09-15:
+
 | Component | Version | Notes |
 |---|---|---|
-| Python | 3.12.x | Widest package/compatibility coverage; hold off on 3.13/3.14 until deps confirm support |
-| Django | 5.2 LTS | Long-term support release (security fixes into ~2028) — matters for a hobby app you won't touch often |
-| django-crontab | 0.7.1 | Latest stable release; unmaintained but small enough that's not a concern here |
-| twilio (Python SDK) | ^9.x | Current major version of the official SDK |
-| gunicorn | 23.x | |
-| Nginx | 1.24+ (Ubuntu 24.04's packaged version) or 1.27 mainline | |
-| Ubuntu | 24.04 LTS | target OS for the VPS deployment steps in Section 7 |
-| certbot | latest via `snap`/`apt` | self-updates, no need to pin |
+| Python | 3.12.14 | Current patch of the 3.12 line; widest package compatibility. Python 3.14.7 is the newest stable release overall and is fully supported by Django 5.2.8+, so 3.13/3.14 are also safe now if preferred — 3.12 is just the more conservative pick. |
+| Django | 5.2 LTS (currently 5.2.14) | Still the right LTS pick — security support into ~2028. Django 6.1.1 is the newest release overall, but it's a non-LTS interim release; the next LTS (6.2) isn't due until April 2027. |
+| django-crontab | 0.7.1 (last released ~2019, unmaintained) | ⚠️ No confirmed compatibility with Django 5.x/6.x — it hasn't been updated to track modern Django. It's simple enough (just wraps management commands into real crontab entries) that it likely still works, but this should be smoke-tested early. Given the staleness, consider skipping the package entirely: write a plain Django management command (e.g. `manage.py run_scheduler`) and add it directly to the system crontab in the deployment steps — same effect, zero extra dependency risk. |
+| twilio (Python SDK) | 9.11.1 | Current release as of Sept 10, 2026 |
+| gunicorn | 26.1.0 | |
+| Nginx | 1.30.4 (stable branch) | Prefer the stable branch over mainline (currently 1.31.5) for a production box; Ubuntu 24.04/26.04's packaged nginx tracks close to this |
+| Ubuntu | 24.04 LTS or 26.04 LTS | 26.04 LTS ("Resolute Raccoon") is now the newest LTS (released April 2026), but it's only a few months old — 24.04 LTS remains a safe, more battle-tested choice if you'd rather not be an early adopter on the OS layer |
+| certbot | 5.7.0 (or latest via `snap`/`apt`) | self-updates, no need to pin |
 
 SQLite itself doesn't need a separate install/version pin — it ships with Python's `sqlite3` module.
 
-Pin exact versions in `requirements.txt` at build time (`pip freeze` after installing) rather than trusting this table verbatim — check for newer patch/minor releases when you actually start building, since this plan was written 2026-09-15.
+Pin exact versions in `requirements.txt` at build time (`pip freeze` after installing) rather than trusting this table verbatim — re-check for newer patch/minor releases when you actually start building.
 
 ## 3. System Components
 
