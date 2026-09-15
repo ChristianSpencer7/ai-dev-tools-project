@@ -25,6 +25,23 @@
 
 **Alternative considered**: Flask is lighter-weight for this app's actual surface area (two routes: the inbound webhook and the completion link) and has less scaffolding. If the admin panel ends up unused, Flask + SQLAlchemy + APScheduler is the leaner fallback — worth revisiting if Django's structure starts to feel like overhead.
 
+## 2b. Recommended Versions
+
+| Component | Version | Notes |
+|---|---|---|
+| Python | 3.12.x | Widest package/compatibility coverage; hold off on 3.13/3.14 until deps confirm support |
+| Django | 5.2 LTS | Long-term support release (security fixes into ~2028) — matters for a hobby app you won't touch often |
+| django-crontab | 0.7.1 | Latest stable release; unmaintained but small enough that's not a concern here |
+| twilio (Python SDK) | ^9.x | Current major version of the official SDK |
+| gunicorn | 23.x | |
+| Nginx | 1.24+ (Ubuntu 24.04's packaged version) or 1.27 mainline | |
+| Ubuntu | 24.04 LTS | target OS for the VPS deployment steps in Section 7 |
+| certbot | latest via `snap`/`apt` | self-updates, no need to pin |
+
+SQLite itself doesn't need a separate install/version pin — it ships with Python's `sqlite3` module.
+
+Pin exact versions in `requirements.txt` at build time (`pip freeze` after installing) rather than trusting this table verbatim — check for newer patch/minor releases when you actually start building, since this plan was written 2026-09-15.
+
 ## 3. System Components
 
 ```
