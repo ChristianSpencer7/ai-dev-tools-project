@@ -21,6 +21,30 @@
 | Process manager | `systemd` service (keeps Flask app + scheduler alive, restarts on crash) |
 | Reverse proxy / TLS | Nginx + Let's Encrypt (Twilio requires HTTPS webhook URLs) |
 
+## 2a. Alternative Tech Stack: Django Variant
+
+If you want a web admin UI for managing chores/people/rotations (instead of only chat commands), Django is a reasonable alternative to the Flask stack above.
+
+| Layer | Choice |
+|---|---|
+| Language | Python |
+| Web framework | Django |
+| Database | SQLite (Django ORM + migrations) |
+| WhatsApp integration | Twilio WhatsApp API |
+| Scheduler | `django-crontab` (simpler than Celery+Beat for a single hourly job) |
+| Hosting | Self-managed VPS or PaaS (Fly.io/Railway/Render) |
+| Process manager | `systemd` (VPS) or platform-managed (PaaS) |
+| Reverse proxy / TLS | Nginx + Let's Encrypt (VPS only; PaaS handles this automatically) |
+
+**Why consider it**: Django's auto-generated admin panel gives you a free web page to view/edit chores, people, and rotation state — useful if you want to check "who's on the hook this week" from a browser instead of only via chat commands.
+
+**Trade-offs vs. Flask**:
+- More boilerplate for this project's size (two routes: `POST /whatsapp/incoming`, `GET /done/<token>`) — Django's app/settings/urls scaffolding is built for larger multi-model apps.
+- Scheduling is still a bolt-on either way; `django-crontab` is the lightweight choice here — avoid Celery+Beat unless you need it elsewhere, since it requires a Redis/RabbitMQ broker.
+- Deploy is slightly heavier than Flask+gunicorn but not dramatically so.
+
+**When to pick this instead**: you want the admin UI, or you already know Django better than Flask. Otherwise, the Flask stack in Section 2 stays the simpler fit.
+
 ## 3. System Components
 
 ```
